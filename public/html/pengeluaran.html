@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <a href="/html/dashboard.html" class="back-btn">← Back to Dashboard</a>
+    <div class="page-header">
+        <h1>Expenses</h1>
+        <button class="btn-add" onclick="showAddForm()">+ Add</button>
+    </div>
+ 
+    <div id="add-form" class="pg-form-box hidden">
+        <div class="pg-form-grid">
+            <div class="pg-field">
+                <label>Date</label>
+                <input type="date" id="add-tanggal">
+                <span class="field-error" id="err-tanggal"></span>
+            </div>
+            <div class="pg-field">
+                <label>Item</label>
+                <input type="text" id="add-item" placeholder="Nama barang">
+                <span class="field-error" id="err-item"></span>
+            </div>
+            <div class="pg-field">
+                <label>Unit Price (Rp)</label>
+                <input type="number" id="add-harga" placeholder="e.g. 10000" min="1">
+                <span class="field-error" id="err-harga"></span>
+            </div>
+            <div class="pg-field">
+                <label>Quantity</label>
+                <input type="number" id="add-jumlah" placeholder="e.g. 2" min="1">
+                <span class="field-error" id="err-jumlah"></span>
+            </div>
+            <div class="pg-field pg-field-full">
+                <label>Description <span class="optional">(opsional)</span></label>
+                <input type="text" id="add-keterangan" placeholder="Keterangan tambahan">
+            </div>
+        </div>
+        <div class="pg-total-preview" id="total-preview">Total: Rp 0</div>
+        <div class="form-actions">
+            <button class="btn-save" onclick="addData()">Save</button>
+            <button class="btn-cancel" onclick="hideAddForm()">Cancel</button>
+        </div>
+    </div>
+ 
+    <table class="pg-table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Item</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+</div>
+<script src="/js/pengeluaran.js"></script>
+</body>
+</html>

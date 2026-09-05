@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="/html/dashboard.html" class="back-btn">Back to Dashboard</a>
+        <div class="page-header">
+            <h1>Income</h1>
+            <button class="btn-add" onclick="showAddForm()">+ Add</button>
+        </div>
+
+        <div id="add-form" class="form-box hidden">
+            <input type="text" id="add-id" placeholder="ID" readonly>
+            <input type="date" id="add-tanggal">
+            <input type="number" id="add-nominal" placeholder="Amount" min="0" step="1000">
+            <textarea id="add-keterangan" placeholder="Description" rows="2"></textarea>
+            <div class="form-actions">
+                <button class="btn-save" onclick="addData()">Save</button>
+                <button class="btn-cancel" onclick="hideAddForm()">Cancel</button>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+    <script src="../js/pemasukan.js"></script>
+</body>
+</html>
