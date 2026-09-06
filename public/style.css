@@ -643,3 +643,19 @@ input[type=date]::-webkit-calendar-picker-indicator {
         grid-column: auto;
     }
 }
+
+.btn-delete {
+    background: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fecaca;
+}
+
+.btn-delete:hover:not(:disabled) {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.btn-delete:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}

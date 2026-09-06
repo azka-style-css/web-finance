@@ -137,6 +137,17 @@ app.post('/pengeluaran', (req, res) => {
     });
 });
 
+app.delete('/pengeluaran/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM pengeluaran WHERE id_pengeluaran = ?', [id], (err) => {
+        if (err) {
+            console.error('Gagal menghapus data pengeluaran:', err);
+            return res.status(500).json({ message: 'Gagal menghapus data' });
+        }
+        res.json({ message: 'Deleted successfully' });
+    });
+});
+
 app.listen(3000, () => {
     console.log('Server running at http://localhost:3000');
 });

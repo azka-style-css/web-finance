@@ -29,6 +29,9 @@ async function loadData() {
                 <td class="col-action">
                     <button class="btn-edit" onclick="editRow('${row.id_pengeluaran}', '${tgl}', \`${itemEsc}\`, ${row.harga_item}, ${row.jumlah_item}, \`${ket}\`)">Edit</button>
                 </td>
+                <td class="col-action col-delete">
+                    <button class="btn-delete btn-sm" id="btn-delete-${row.id_pengeluaran}" onclick="deleteRow('${row.id_pengeluaran}')">Delete</button>
+                </td>
             </tr>`;
     });
 }
@@ -46,9 +49,15 @@ function editRow(id, tanggal, item, harga, jumlah, keterangan) {
         `<span id="inline-total-${id}" class="col-total">Rp ${Number(harga * jumlah).toLocaleString('id-ID')}</span>`;
     document.getElementById(`ket-${id}`).innerHTML =
         `<input class="inline-input" id="input-ket-${id}" value="${keterangan}">`;
+
+    // Ubah kolom Action menjadi Save & Cancel
     document.querySelector(`#row-${id} .col-action`).innerHTML = `
         <button class="btn-save btn-sm" onclick="saveRow('${id}')">Save</button>
         <button class="btn-cancel btn-sm" onclick="loadData()">Cancel</button>`;
+
+    // Disable tombol Delete di baris ini selama mode edit aktif
+    const btnDelete = document.querySelector(`#row-${id} .col-delete button`);
+    if (btnDelete) btnDelete.disabled = true;
 }
  
 function updateInlineTotal(id) {
@@ -77,6 +86,21 @@ async function saveRow(id) {
     });
     showToast('Data berhasil diperbarui', 'success');
     loadData();
+}
+
+async function deleteRow(id) {
+    if (!confirm(`Apakah kamu yakin ingin menghapus transaksi ${id}?`)) return;
+
+    const res = await fetch(`/pengeluaran/${id}`, {
+        method: 'DELETE'
+    });
+
+    if (res.ok) {
+        showToast('Data berhasil dihapus', 'success');
+        loadData();
+    } else {
+        showToast('Gagal menghapus data', 'error');
+    }
 }
  
 function showAddForm() {
