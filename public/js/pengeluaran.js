@@ -30,7 +30,7 @@ async function loadData() {
                 <td class="col-action">
                     <div class="action-btns">
                         <button class="btn-edit btn-sm" onclick="editRow('${row.id_pengeluaran}', '${tgl}', \`${itemEsc}\`, ${row.harga_item}, ${row.jumlah_item}, \`${ket}\`)">Edit</button>
-                        <button class="btn-delete btn-sm" onclick="deleteRow('${row.id_pengeluaran}')">Delete</button>
+                        <button class="btn-delete btn-sm" onclick="confirmDelete('${row.id_pengeluaran}')">Delete</button>
                     </div>
                 </td>
             </tr>`;
@@ -85,8 +85,11 @@ async function saveRow(id) {
     else showToast('Gagal memperbarui data', 'error');
 }
 
+function confirmDelete(id) {
+    showConfirm(`Hapus transaksi ${id}?`, () => deleteRow(id));
+}
+
 async function deleteRow(id) {
-    if (!confirm(`Hapus transaksi ${id}?`)) return;
     const res = await fetch(`/pengeluaran/${id}`, { method: 'DELETE' });
     if (res.ok) { showToast('Data berhasil dihapus', 'success'); loadData(); }
     else showToast('Gagal menghapus data', 'error');
@@ -152,17 +155,55 @@ async function addData() {
     else showToast('Gagal menyimpan data', 'error');
 }
 
+// ── Toast notifikasi ──────────────────────────────────────
 function showToast(msg, type = 'success') {
-    let toast = document.getElementById('pg-toast');
-    if (!toast) {
-        toast = document.createElement('div');
-        toast.id = 'pg-toast';
-        document.body.appendChild(toast);
-    }
+    const existing = document.getElementById('app-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'app-toast';
+    toast.className = 'app-toast app-toast-' + type;
     toast.textContent = msg;
-    toast.className = 'pg-toast pg-toast-' + type + ' show';
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add('show'));
     clearTimeout(toast._t);
-    toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
+    toast._t = setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 2500);
+}
+
+// ── Confirm dialog pakai toast ────────────────────────────
+function showConfirm(msg, onOk) {
+    const existing = document.getElementById('app-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'app-toast';
+    toast.className = 'app-toast app-toast-confirm';
+    toast.innerHTML = `
+        <span class="toast-msg">${msg}</span>
+        <div class="toast-actions">
+            <button class="toast-btn-ok" onclick="handleConfirmOk()">OK</button>
+            <button class="toast-btn-cancel" onclick="handleConfirmCancel()">Cancel</button>
+        </div>`;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+
+    window._confirmCallback = onOk;
+}
+
+function handleConfirmOk() {
+    const toast = document.getElementById('app-toast');
+    if (toast) { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }
+    if (window._confirmCallback) { window._confirmCallback(); window._confirmCallback = null; }
+}
+
+function handleConfirmCancel() {
+    const toast = document.getElementById('app-toast');
+    if (toast) { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }
+    window._confirmCallback = null;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
