@@ -92,7 +92,7 @@ function buildDropdown(key, absen, month) {
         <button class="amount-option" onclick="selectAmount(event, ${absen}, '${month}', 5000)">5k</button>
         <div class="amount-custom">
             <input type="number" id="custom-${key}"
-                min="0" max="20000" placeholder="0–20000"
+                min="0" max="10000" placeholder="0–10000"
                 onclick="event.stopPropagation()"
                 onkeydown="if(event.key==='Enter') confirmCustom(event, ${absen}, '${month}')">
             <button class="amount-ok" onclick="confirmCustom(event, ${absen}, '${month}')">OK</button>

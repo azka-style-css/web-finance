@@ -8,10 +8,10 @@
 </head>
 <body>
 <div class="container">
-    <a href="/html/dashboard.html" class="back-btn">Back to Dashboard</a>
+    <a href="/html/dashboard.html" class="back-btn">← Back to Dashboard</a>
     <div class="page-header">
-        <h1>Expenses</h1>
-        <button class="btn-add" onclick="showAddForm()">+ Add</button>
+        <div><span class="eyebrow">CASH FLOW</span><h1>Expenses</h1></div>
+        <button class="btn-add" onclick="showAddForm()">+ Add expense</button>
     </div>
  
     <div id="add-form" class="pg-form-box hidden">
@@ -65,6 +65,7 @@
         <tbody id="tbody"></tbody>
     </table>
 </div>
+<script src="/js/ui.js"></script>
 <script src="/js/pengeluaran.js"></script>
 </body>
 </html>

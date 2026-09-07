@@ -155,57 +155,6 @@ async function addData() {
     else showToast('Gagal menyimpan data', 'error');
 }
 
-// ── Toast notifikasi ──────────────────────────────────────
-function showToast(msg, type = 'success') {
-    const existing = document.getElementById('app-toast');
-    if (existing) existing.remove();
-
-    const toast = document.createElement('div');
-    toast.id = 'app-toast';
-    toast.className = 'app-toast app-toast-' + type;
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-
-    requestAnimationFrame(() => toast.classList.add('show'));
-    clearTimeout(toast._t);
-    toast._t = setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 2500);
-}
-
-// ── Confirm dialog pakai toast ────────────────────────────
-function showConfirm(msg, onOk) {
-    const existing = document.getElementById('app-toast');
-    if (existing) existing.remove();
-
-    const toast = document.createElement('div');
-    toast.id = 'app-toast';
-    toast.className = 'app-toast app-toast-confirm';
-    toast.innerHTML = `
-        <span class="toast-msg">${msg}</span>
-        <div class="toast-actions">
-            <button class="toast-btn-ok" onclick="handleConfirmOk()">OK</button>
-            <button class="toast-btn-cancel" onclick="handleConfirmCancel()">Cancel</button>
-        </div>`;
-    document.body.appendChild(toast);
-    requestAnimationFrame(() => toast.classList.add('show'));
-
-    window._confirmCallback = onOk;
-}
-
-function handleConfirmOk() {
-    const toast = document.getElementById('app-toast');
-    if (toast) { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }
-    if (window._confirmCallback) { window._confirmCallback(); window._confirmCallback = null; }
-}
-
-function handleConfirmCancel() {
-    const toast = document.getElementById('app-toast');
-    if (toast) { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }
-    window._confirmCallback = null;
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add-harga').addEventListener('input', updateTotalPreview);
     document.getElementById('add-jumlah').addEventListener('input', updateTotalPreview);
