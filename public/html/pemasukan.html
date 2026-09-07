@@ -7,36 +7,51 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <div class="container">
-        <a href="/html/dashboard.html" class="back-btn">Back to Dashboard</a>
-        <div class="page-header">
-            <h1>Income</h1>
-            <button class="btn-add" onclick="showAddForm()">+ Add</button>
-        </div>
+<div class="container">
+    <a href="/html/dashboard.html" class="back-btn">← Back to Dashboard</a>
+    <div class="page-header">
+        <h1>Income</h1>
+        <button class="btn-add" onclick="showAddForm()">+ Add</button>
+    </div>
 
-        <div id="add-form" class="form-box hidden">
-            <input type="text" id="add-id" placeholder="ID" readonly>
-            <input type="date" id="add-tanggal">
-            <input type="number" id="add-nominal" placeholder="Amount" min="0" step="1000">
-            <textarea id="add-keterangan" placeholder="Description" rows="2"></textarea>
-            <div class="form-actions">
-                <button class="btn-save" onclick="addData()">Save</button>
-                <button class="btn-cancel" onclick="hideAddForm()">Cancel</button>
+    <div id="add-form" class="pg-form-box hidden">
+        <div class="pg-form-grid">
+            <div class="pg-field">
+                <label>ID</label>
+                <input type="text" id="add-id" readonly>
+            </div>
+            <div class="pg-field">
+                <label>Date</label>
+                <input type="date" id="add-tanggal">
+            </div>
+            <div class="pg-field">
+                <label>Amount (Rp)</label>
+                <input type="number" id="add-nominal" placeholder="e.g. 50000" min="1">
+            </div>
+            <div class="pg-field">
+                <label>Description <span class="optional">(opsional)</span></label>
+                <input type="text" id="add-keterangan" placeholder="Keterangan tambahan">
             </div>
         </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-        </table>
+        <div class="form-actions">
+            <button class="btn-save" onclick="addData()">Save</button>
+            <button class="btn-cancel" onclick="hideAddForm()">Cancel</button>
+        </div>
     </div>
-    <script src="../js/pemasukan.js"></script>
+
+    <table class="pg-table pm-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+</div>
+<script src="/js/pemasukan.js"></script>
 </body>
 </html>

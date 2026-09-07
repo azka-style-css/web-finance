@@ -659,3 +659,33 @@ input[type=date]::-webkit-calendar-picker-indicator {
     opacity: 0.4;
     cursor: not-allowed;
 }
+
+/* ── Action buttons dalam satu kolom ── */
+.action-btns {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
+/* ── Pemasukan table ── */
+.pm-table {
+    table-layout: fixed;
+    min-width: 600px;
+}
+.pm-table th:nth-child(1), .pm-table td:nth-child(1) { width: 100px; text-align: center; }
+.pm-table th:nth-child(2), .pm-table td:nth-child(2) { width: 120px; text-align: center; }
+.pm-table th:nth-child(3), .pm-table td:nth-child(3) { width: 130px; text-align: center; }
+.pm-table th:nth-child(4), .pm-table td:nth-child(4) { width: auto; }
+.pm-table th:nth-child(5), .pm-table td:nth-child(5) { width: 140px; text-align: center; }
+
+/* ── Pengeluaran: action column width disesuaikan ── */
+.pg-table th:nth-child(9), .pg-table td:nth-child(9) { width: 140px; text-align: center; }
+
+.empty-state {
+    text-align: center;
+    color: #94a3b8;
+    padding: 40px 0;
+    font-size: 13px;
+}

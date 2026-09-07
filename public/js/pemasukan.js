@@ -3,20 +3,75 @@ async function loadData() {
     const data = await res.json();
     const tbody = document.getElementById('tbody');
     tbody.innerHTML = '';
-    data.forEach(row => {
-        const tgl = row.tanggal ? new Date(row.tanggal).toISOString().split('T')[0] : '';
+
+    if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-state">Belum ada data pemasukan</td></tr>`;
+        return;
+    }
+
+    data.forEach((row, i) => {
+        const tgl = row.tanggal ? new Date(row.tanggal).toISOString().split('T')[0] : '-';
+        const tglDisplay = tgl !== '-'
+            ? new Date(row.tanggal).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' })
+            : '-';
+        const ket = (row.keterangan || '').replace(/`/g, "'");
+
         tbody.innerHTML += `
-            <tr>
-                <td>${row.id_pemasukan}</td>
-                <td>${tgl}</td>
-                <td>Rp ${Number(row.nominal).toLocaleString('id-ID')}</td>
-                <td class="wrap-text">${row.keterangan || '-'}</td>
+            <tr id="row-${row.id_pemasukan}">
+                <td class="col-id">${row.id_pemasukan}</td>
+                <td id="tgl-${row.id_pemasukan}">${tglDisplay}</td>
+                <td id="nominal-${row.id_pemasukan}" class="col-total">Rp ${Number(row.nominal).toLocaleString('id-ID')}</td>
+                <td id="ket-${row.id_pemasukan}" class="col-ket">${row.keterangan || '-'}</td>
+                <td class="col-action">
+                    <div class="action-btns">
+                        <button class="btn-edit btn-sm" onclick="editRow('${row.id_pemasukan}', '${tgl}', ${row.nominal}, \`${ket}\`)">Edit</button>
+                        <button class="btn-delete btn-sm" onclick="deleteRow('${row.id_pemasukan}')">Delete</button>
+                    </div>
+                </td>
             </tr>`;
     });
 }
 
+function editRow(id, tanggal, nominal, keterangan) {
+    document.getElementById(`tgl-${id}`).innerHTML =
+        `<input type="date" class="inline-input" id="input-tgl-${id}" value="${tanggal}">`;
+    document.getElementById(`nominal-${id}`).innerHTML =
+        `<input type="number" class="inline-input" id="input-nominal-${id}" value="${nominal}" min="1">`;
+    document.getElementById(`ket-${id}`).innerHTML =
+        `<input class="inline-input" id="input-ket-${id}" value="${keterangan}">`;
+    document.querySelector(`#row-${id} .col-action`).innerHTML = `
+        <div class="action-btns">
+            <button class="btn-save btn-sm" onclick="saveRow('${id}')">Save</button>
+            <button class="btn-cancel btn-sm" onclick="loadData()">Cancel</button>
+        </div>`;
+}
+
+async function saveRow(id) {
+    const tanggal    = document.getElementById(`input-tgl-${id}`).value;
+    const nominal    = parseFloat(document.getElementById(`input-nominal-${id}`).value);
+    const keterangan = document.getElementById(`input-ket-${id}`).value;
+
+    if (!nominal || nominal <= 0) return showToast('Nominal harus lebih dari 0', 'error');
+
+    const res = await fetch(`/pemasukan/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tanggal, nominal, keterangan })
+    });
+    if (res.ok) { showToast('Data berhasil diperbarui', 'success'); loadData(); }
+    else showToast('Gagal memperbarui data', 'error');
+}
+
+async function deleteRow(id) {
+    if (!confirm(`Hapus transaksi ${id}?`)) return;
+    const res = await fetch(`/pemasukan/${id}`, { method: 'DELETE' });
+    if (res.ok) { showToast('Data berhasil dihapus', 'success'); loadData(); }
+    else showToast('Gagal menghapus data', 'error');
+}
+
 async function showAddForm() {
     document.getElementById('add-form').classList.remove('hidden');
+    document.getElementById('add-tanggal').valueAsDate = new Date();
     const res = await fetch('/pemasukan/next-id');
     const result = await res.json();
     document.getElementById('add-id').value = result.id;
@@ -24,30 +79,40 @@ async function showAddForm() {
 
 function hideAddForm() {
     document.getElementById('add-form').classList.add('hidden');
+    ['add-tanggal','add-nominal','add-keterangan'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
 }
 
 async function addData() {
     const id_pemasukan = document.getElementById('add-id').value;
-    const tanggal = document.getElementById('add-tanggal').value;
-    const nominal = document.getElementById('add-nominal').value;
-    const keterangan = document.getElementById('add-keterangan').value;
+    const tanggal      = document.getElementById('add-tanggal').value;
+    const nominal      = parseFloat(document.getElementById('add-nominal').value);
+    const keterangan   = document.getElementById('add-keterangan').value;
 
-    if (!tanggal || !nominal) {
-        alert('Please fill in date and amount');
-        return;
-    }
+    if (!tanggal)              return showToast('Tanggal wajib diisi', 'error');
+    if (!nominal || nominal <= 0) return showToast('Nominal harus lebih dari 0', 'error');
 
-    await fetch('/pemasukan', {
+    const res = await fetch('/pemasukan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_pemasukan, tanggal, nominal, keterangan })
     });
-
-    document.getElementById('add-tanggal').value = '';
-    document.getElementById('add-nominal').value = '';
-    document.getElementById('add-keterangan').value = '';
-    hideAddForm();
-    loadData();
+    if (res.ok) { showToast('Data berhasil ditambahkan', 'success'); hideAddForm(); loadData(); }
+    else showToast('Gagal menyimpan data', 'error');
 }
 
-loadData();
+function showToast(msg, type = 'success') {
+    let toast = document.getElementById('pm-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'pm-toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.className = 'pg-toast pg-toast-' + type + ' show';
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+document.addEventListener('DOMContentLoaded', () => { loadData(); });

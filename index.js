@@ -129,11 +129,14 @@ app.put('/pengeluaran/:id', (req, res) => {
     });
 });
 
-app.post('/pengeluaran', (req, res) => {
-    const { id_pengeluaran, tanggal, item, harga_item, jumlah_item, total_harga, keterangan } = req.body;
-    db.query('INSERT INTO pengeluaran (id_pengeluaran, tanggal, item, harga_item, jumlah_item, total_harga, keterangan) VALUES (?, ?, ?, ?, ?, ?, ?)', [id_pengeluaran, tanggal, item, harga_item, jumlah_item, total_harga, keterangan], (err) => {
-        if (err) throw err;
-        res.json({ message: 'Added successfully' });
+app.delete('/pemasukan/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM pemasukan WHERE id_pemasukan = ?', [id], (err) => {
+        if (err) {
+            console.error('Gagal menghapus data pemasukan:', err);
+            return res.status(500).json({ message: 'Gagal menghapus data' });
+        }
+        res.json({ message: 'Deleted successfully' });
     });
 });
 
